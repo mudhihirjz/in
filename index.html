@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Elimu Hub - Navigate | Secondary & Advanced Materials</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #f0f4f8; }
+    .tab-active-olevel {
+      background: white;
+      color: #1e3a8a;
+      font-weight: 700;
+      border-bottom: 3px solid #1e3a8a;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .tab-active-alevel {
+      background: white;
+      color: #0f766e;
+      font-weight: 700;
+      border-bottom: 3px solid #0f766e;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .subject-card {
+      transition: all 0.25s ease;
+    }
+    .subject-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 25px -12px rgba(0,0,0,0.15);
+    }
+    .fade-slide {
+      animation: fadeSlide 0.3s ease-out;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateX(12px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .back-btn {
+      transition: all 0.2s;
+    }
+    .back-btn:hover {
+      transform: translateX(-3px);
+    }
+    .material-item {
+      transition: all 0.15s ease;
+    }
+    .material-item:hover {
+      background: #f8fafc;
+    }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
+  </style>
+</head>
+<body class="antialiased">
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-8">
+    <div class="text-center mb-6">
+      <div class="inline-flex bg-gradient-to-br from-indigo-100 to-indigo-200 p-3 rounded-2xl shadow-md mb-2">
+        <i class="fas fa-graduation-cap text-3xl text-indigo-800"></i>
+      </div>
+      <h1 class="text-3xl md:text-4xl font-black bg-gradient-to-r from-indigo-900 to-sky-700 bg-clip-text text-transparent">Elimu Hub</h1>
+      <p class="text-gray-500 max-w-xl mx-auto mt-1">Bonyeza <span class="font-bold text-indigo-600">"Enter"</span> kwenye somo → Navigate kwenye kurasa za Forms na kupakua material</p>
+    </div>
+
+    <div class="flex justify-center mb-8">
+      <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-sm border border-gray-200 inline-flex p-1">
+        <button id="tabOlevelBtn" class="tab-btn px-7 py-2.5 rounded-xl text-gray-700 font-semibold flex items-center gap-2 transition-all">
+          <i class="fas fa-school"></i> <span>O-Level · F1 - F4</span>
+        </button>
+        <button id="tabAlevelBtn" class="tab-btn px-7 py-2.5 rounded-xl text-gray-700 font-semibold flex items-center gap-2 transition-all">
+          <i class="fas fa-university"></i> <span>A-Level · F5 - F6 (Masomo)</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="subjectListView" class="fade-slide"></div>
+    <div id="detailView" class="hidden fade-slide"></div>
+
+    <div id="globalFooter" class="text-center text-gray-400 text-xs mt-10 border-t pt-5">
+      <i class="fas fa-download mr-1"></i> Bofya Pakua ili kupata vitabu, notes na past papers
+    </div>
+  </div>
+
+  <script>
+    // ----------------------------------------------
+    // DATA
+    // ----------------------------------------------
+    const oLevelSubjects = [
+      "Mathematics", "English Language", "Kiswahili", "Biology", "Chemistry", "Physics",
+      "History", "Geography", "Civics", "Bookkeeping", "Commerce", "Literature in English", "Islamic Studies"
+    ];
+    
+    const aLevelSubjects = [
+      "Physics", "Chemistry", "Biology", "Mathematics", "Geography", "History", 
+      "Economics", "Commerce", "Accountancy", "English Language", "Kiswahili", 
+      "Literature in English", "Agriculture", "Food & Nutrition", "Islamic Studies", "Law"
+    ];
+    
+    const randomFileSize = () => {
+      const sizes = ['1.8 MB', '2.4 MB', '3.1 MB', '4.0 MB', '5.2 MB', '2.7 MB'];
+      return sizes[Math.floor(Math.random() * sizes.length)];
+    };
+    
+    const getMaterialIcon = (type) => {
+      if (type === 'textbook') return 'fas fa-book-open';
+      if (type === 'notes') return 'fas fa-pen-fancy';
+      if (type === 'pastpaper') return 'fas fa-file-pdf';
+      return 'fas fa-file-alt';
+    };
+    
+    const generateOLevelMaterials = (subject, formNumber) => {
+      const materials = [];
+      const types = [
+        { name: `📘 Textbook - ${subject} Form ${formNumber}`, typeKey: 'textbook' },
+        { name: `📝 Complete Notes - F${formNumber}`, typeKey: 'notes' },
+        { name: `📄 Past Papers (Form ${formNumber})`, typeKey: 'pastpaper' }
+      ];
+      types.forEach((t, idx) => {
+        materials.push({
+          id: `olevel_${subject}_F${formNumber}_${idx}`,
+          title: t.name,
+          size: randomFileSize(),
+          icon: getMaterialIcon(t.typeKey),
+          downloadUrl: "#"
+        });
+      });
+      return materials;
+    };
+    
+    const generateALevelMaterials = (subject, levelLabel) => {
+      const materials = [];
+      const types = [
+        { name: `📘 ${subject} ${levelLabel} Textbook`, typeKey: 'textbook' },
+        { name: `📝 ${subject} ${levelLabel} Comprehensive Notes`, typeKey: 'notes' },
+        { name: `📄 ${subject} ${levelLabel} Past Papers (2015-2023)`, typeKey: 'pastpaper' }
+      ];
+      types.forEach((t, idx) => {
+        materials.push({
+          id: `alevel_${subject}_${levelLabel}_${idx}`,
+          title: t.name,
+          size: randomFileSize(),
+          icon: getMaterialIcon(t.typeKey),
+          downloadUrl: "#"
+        });
+      });
+      return materials;
+    };
+    
+    // Cache for materials
+    const oLevelFormCache = new Map(); 
+    const aLevelCache = new Map(); 
+    
+    const getOLevelFormMaterials = (subject, formNum) => {
+      const key = `${subject}_F${formNum}`;
+      if (!oLevelFormCache.has(key)) {
+        oLevelFormCache.set(key, generateOLevelMaterials(subject, formNum));
+      }
+      return oLevelFormCache.get(key);
+    };
+    
+    const getALevelMaterialsByLevel = (subject, level) => {
+      const key = `${subject}_${level}`;
+      if (!aLevelCache.has(key)) {
+        aLevelCache.set(key, generateALevelMaterials(subject, level));
+      }
+      return aLevelCache.get(key);
+    };
+    
+    // Global state for navigation
+    let currentLevel = 'olevel'; 
+    let currentSubject = null;
+    let currentView = 'list'; 
+    
+    // DOM elements
+    const listViewDiv = document.getElementById('subjectListView');
+    const detailViewDiv = document.getElementById('detailView');
+    
+    // Render subject list based on level
+    const renderSubjectList = () => {
+      const subjects = currentLevel === 'olevel' ? oLevelSubjects : aLevelSubjects;
+      const bgGradient = currentLevel === 'olevel' ? 'from-indigo-50 to-indigo-100/30' : 'from-teal-50 to-teal-100/30';
+      const iconColor = currentLevel === 'olevel' ? 'text-indigo-600' : 'text-teal-600';
+      const btnBg = currentLevel === 'olevel' ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-teal-600 hover:bg-teal-700';
+      
+      let html = `
+        <div class="space-y-4 fade-slide">
+          <div class="bg-gradient-to-r ${bgGradient} rounded-2xl p-5 border border-gray-200 shadow-sm">
+            <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-3">
+              <i class="fas ${currentLevel === 'olevel' ? 'fa-chalkboard-user' : 'fa-flask'} ${iconColor}"></i> 
+              ${currentLevel === 'olevel' ? 'Masomo ya Secondary (Form 1-4)' : 'Advanced Level (Form 5-6) - Masomo Yote'}
+            </h2>
+            <p class="text-gray-600 text-sm mt-1">Bonyeza "Enter" kwenye somo lolote kuona Forms zake na kupakua material.</p>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
+      `;
+      
+      subjects.forEach(subject => {
+        html += `
+          <div class="bg-white rounded-xl border border-gray-200 shadow-md overflow-hidden subject-card transition-all">
+            <div class="p-5 flex justify-between items-center">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full ${currentLevel === 'olevel' ? 'bg-indigo-100' : 'bg-teal-100'} flex items-center justify-center">
+                  <i class="fas ${currentLevel === 'olevel' ? 'fa-book' : 'fa-microscope'} ${currentLevel === 'olevel' ? 'text-indigo-600' : 'text-teal-600'} text-base"></i>
+                </div>
+                <h3 class="font-extrabold text-gray-800 text-lg tracking-tight">${subject}</h3>
+              </div>
+              <button class="navigate-enter-btn ${btnBg} text-white px-5 py-2 rounded-full text-sm font-semibold shadow-md flex items-center gap-2 transition-all" data-subject="${subject}">
+                <i class="fas fa-sign-in-alt"></i> Enter
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      
+      html += `</div></div>`;
+      listViewDiv.innerHTML = html;
+      
+      document.querySelectorAll('.navigate-enter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const subject = btn.getAttribute('data-subject');
+          if (subject) {
+            navigateToDetail(subject);
+          }
+        });
+      });
+    };
+    
+    // Navigate to detail view (forms / levels)
+    const navigateToDetail = (subject) => {
+      currentSubject = subject;
+      currentView = 'detail';
+      
+      if (currentLevel === 'olevel') {
+        let formsHtml = `
+          <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden fade-slide">
+            <div class="bg-gradient-to-r from-indigo-700 to-indigo-800 px-6 py-4 flex justify-between items-center">
+              <div class="flex items-center gap-3">
+                <i class="fas fa-chalkboard text-white text-2xl"></i>
+                <h2 class="text-white text-2xl font-bold">${subject}</h2>
+              </div>
+              <button id="backToListBtn" class="back-btn bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition">
+                <i class="fas fa-arrow-left"></i> Nyuma kwa Masomo
+              </button>
+            </div>
+            <div class="p-6">
+              <p class="text-gray-500 mb-5 text-sm"><i class="fas fa-info-circle"></i> Chagua Form ili upakue vitabu, notes na past papers</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
+        `;
+        
+        for (let form = 1; form <= 4; form++) {
+          const materials = getOLevelFormMaterials(subject, form);
+          formsHtml += `
+            <div class="border border-gray-200 rounded-xl overflow-hidden shadow-sm bg-gray-50/50">
+              <div class="bg-gray-50 p-3 border-b font-bold text-indigo-800 text-base flex justify-between items-center">
+                <span>Form ${form}</span>
+                <i class="fas fa-folder-open text-gray-400 text-sm"></i>
+              </div>
+              <div class="p-2 space-y-1.5">
+          `;
+          materials.forEach(mat => {
+            formsHtml += `
+              <div class="material-item flex justify-between items-center p-2 rounded-lg bg-white border border-gray-100 gap-2">
+                <div class="flex gap-2 items-center flex-1 min-w-0">
+                  <i class="${mat.icon} text-indigo-500 w-4 flex-shrink-0 text-center"></i>
+                  <span class="text-xs text-gray-800 truncate inline-block flex-1" title="${mat.title}">${mat.title}</span>
+                  <span class="text-[9px] text-gray-400 flex-shrink-0">(${mat.size})</span>
+                </div>
+                <a href="${mat.downloadUrl}" class="download-material bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-1 rounded-full text-[10px] font-medium flex items-center gap-1 flex-shrink-0">
+                  <i class="fas fa-download"></i> Pakua
+                </a>
+              </div>
+            `;
+          });
+          formsHtml += `</div></div>`;
+        }
+        formsHtml += `</div></div></div>`;
+        detailViewDiv.innerHTML = formsHtml;
+        
+      } 
+      else { 
+        const form5Materials = getALevelMaterialsByLevel(subject, "Form 5");
+        const form6Materials = getALevelMaterialsByLevel(subject, "Form 6");
+        
+        let alevelHtml = `
+          <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden fade-slide">
+            <div class="bg-gradient-to-r from-teal-700 to-teal-800 px-6 py-4 flex justify-between items-center">
+              <div class="flex items-center gap-3">
+                <i class="fas fa-flask text-white text-2xl"></i>
+                <h2 class="text-white text-2xl font-bold">${subject} (A-Level)</h2>
+              </div>
+              <button id="backToListBtn" class="back-btn bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i> Nyuma kwa Masomo
+              </button>
+            </div>
+            <div class="p-6">
+              <p class="text-gray-500 mb-5 text-sm"><i class="fas fa-graduation-cap"></i> Chagua Level (Form 5 au Form 6) kupakua nyenzo</p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="border border-teal-200 rounded-xl overflow-hidden bg-teal-50/20">
+                  <div class="bg-teal-50 p-3 border-b font-extrabold text-teal-800 text-base flex items-center gap-2"><i class="fas fa-5"></i> Form 5 Materials</div>
+                  <div class="p-3 space-y-2">
+        `;
+        form5Materials.forEach(mat => {
+          alevelHtml += `
+            <div class="material-item flex justify-between items-center p-2 rounded-lg bg-white border border-gray-100 gap-2">
+              <div class="flex gap-2 items-center flex-1 min-w-0">
+                <i class="${mat.icon} text-teal-600 flex-shrink-0"></i>
+                <span class="text-xs text-gray-800 truncate inline-block flex-1" title="${mat.title}">${mat.title}</span>
+                <span class="text-[9px] text-gray-400 flex-shrink-0">(${mat.size})</span>
+              </div>
+              <a href="${mat.downloadUrl}" class="download-material bg-teal-600 hover:bg-teal-700 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 flex-shrink-0"><i class="fas fa-download"></i> Pakua</a>
+            </div>
+          `;
+        });
+        alevelHtml += `</div></div><div class="border border-teal-200 rounded-xl overflow-hidden bg-teal-50/20"><div class="bg-teal-50 p-3 border-b font-extrabold text-teal-800 text-base flex items-center gap-2"><i class="fas fa-6"></i> Form 6 Materials</div><div class="p-3 space-y-2">`;
+        form6Materials.forEach(mat => {
+          alevelHtml += `
+            <div class="material-item flex justify-between items-center p-2 rounded-lg bg-white border border-gray-100 gap-2">
+              <div class="flex gap-2 items-center flex-1 min-w-0">
+                <i class="${mat.icon} text-teal-600 flex-shrink-0"></i>
+                <span class="text-xs text-gray-800 truncate inline-block flex-1" title="${mat.title}">${mat.title}</span>
+                <span class="text-[9px] text-gray-400 flex-shrink-0">(${mat.size})</span>
+              </div>
+              <a href="${mat.downloadUrl}" class="download-material bg-teal-600 hover:bg-teal-700 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 flex-shrink-0"><i class="fas fa-download"></i> Pakua</a>
+            </div>
+          `;
+        });
+        alevelHtml += `</div></div></div></div></div>`;
+        detailViewDiv.innerHTML = alevelHtml;
+      }
+      
+      listViewDiv.classList.add('hidden');
+      detailViewDiv.classList.remove('hidden');
+      
+      const backBtn = document.getElementById('backToListBtn');
+      if (backBtn) {
+        backBtn.addEventListener('click', () => {
+          currentView = 'list';
+          listViewDiv.classList.remove('hidden');
+          detailViewDiv.classList.add('hidden');
+          renderSubjectList(); 
+        });
+      }
+    };
+    
+    // Tab switching logic (FIXED: Sasa inatofautisha rangi vizuri kati ya O-level na A-level)
+    const setActiveLevel = (level) => {
+      currentLevel = level;
+      currentView = 'list';
+      currentSubject = null;
+      listViewDiv.classList.remove('hidden');
+      detailViewDiv.classList.add('hidden');
+      renderSubjectList();
+      
+      const tabO = document.getElementById('tabOlevelBtn');
+      const tabA = document.getElementById('tabAlevelBtn');
+      
+      [tabO, tabA].forEach(btn => {
+        btn.classList.remove('tab-active-olevel', 'tab-active-alevel', 'bg-white', 'shadow-sm');
+        btn.classList.add('text-gray-600');
+      });
+      
+      if (level === 'olevel') {
+        tabO.classList.add('tab-active-olevel');
+        tabO.classList.remove('text-gray-600');
+      } else {
+        tabA.classList.add('tab-active-alevel');
+        tabA.classList.remove('text-gray-600');
+      }
+    };
+    
+    // Download interceptor with toast notification
+    const setupDownloadInterceptor = () => {
+      document.body.addEventListener('click', (e) => {
+        const downloadLink = e.target.closest('.download-material');
+        if (downloadLink && downloadLink.getAttribute('href') === '#') {
+          e.preventDefault();
+          let titleSpan = downloadLink.closest('.material-item')?.querySelector('span');
+          let materialName = titleSpan ? titleSpan.innerText : 'Material';
+          
+          const oldToast = document.querySelector('.download-toast');
+          if (oldToast) oldToast.remove();
+          
+          const toast = document.createElement('div');
+          toast.className = 'download-toast fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-5 py-2.5 rounded-full shadow-xl text-sm z-50 font-medium';
+          toast.innerText = `✅ Kupakua: "${materialName.substring(0, 45)}..."`;
+          toast.style.animation = 'fadeSlide 0.2s ease-out';
+          
+          document.body.appendChild(toast);
+          setTimeout(() => { 
+            toast.style.opacity = '0'; 
+            toast.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => toast.remove(), 300); 
+          }, 2500);
+        }
+      });
+    };
+    
+    document.getElementById('tabOlevelBtn').addEventListener('click', () => setActiveLevel('olevel'));
+    document.getElementById('tabAlevelBtn').addEventListener('click', () => setActiveLevel('alevel'));
+    
+    // Initial execution
+    setActiveLevel('olevel');
+    setupDownloadInterceptor();
+  </script>
+</body>
+</html>
