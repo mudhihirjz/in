@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utility Hub | Split Bill • Password • Countdown</title>
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ========== CSS VARIABLES ========== */
+        :root {
+            --bg: #f0f4f8;
+            --card: #ffffff;
+            --text: #1a1a2e;
+            --subtext: #64748b;
+            --border: #e2e8f0;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-amber: #f59e0b;
+            --accent-cyan: #06b6d4;
+            --shadow: 0 4px 20px rgba(0,0,0,0.06);
+            --input-bg: #f8fafc;
+            --tab-active-bg: #6366f1;
+            --tab-active-text: #fff;
+            --tab-inactive-bg: #e2e8f0;
+            --tab-inactive-text: #475569;
+        }
+
+        .dark-mode {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #e2e8f0;
+            --subtext: #94a3b8;
+            --border: #334155;
+            --shadow: 0 4px 25px rgba(0,0,0,0.3);
+            --input-bg: #1e293b;
+            --tab-inactive-bg: #334155;
+            --tab-inactive-text: #cbd5e1;
+        }
+
+        /* ========== RESET ========== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 30px 15px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        /* ========== HEADER ========== */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h1 .fa-cubes {
+            color: #6366f1;
+            font-size: 1.6rem;
+        }
+
+        .dark-toggle {
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .dark-toggle:hover { border-color: var(--primary); }
+        .dark-toggle .fa-moon { color: #6366f1; }
+        .dark-toggle .fa-sun { color: #f59e0b; }
+
+        /* ========== TABS ========== */
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            background: var(--card);
+            border-radius: 16px;
+            padding: 6px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 10px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--tab-inactive-bg);
+            color: var(--tab-inactive-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: var(--tab-active-bg);
+            color: var(--tab-active-text);
+            box-shadow: 0 2px 8px rgba(99,102,241,0.3);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: #cbd5e1;
+        }
+
+        .dark-mode .tab-btn:hover:not(.active) {
+            background: #475569;
+        }
+
+        /* ========== TAB CONTENT ========== */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .card h2 {
+            font-size: 1.3rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card .subtitle {
+            font-size: 0.85rem;
+            color: var(--subtext);
+            margin-bottom: 20px;
+        }
+
+        /* ========== FORM ELEMENTS ========== */
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--subtext);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            background: var(--input-bg);
+            color: var(--text);
+            outline: none;
+            transition: border 0.3s, box-shadow 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-copy {
+            background: var(--accent-cyan);
+            color: #fff;
+            margin-top: 12px;
+        }
+        .btn-copy:hover { opacity: 0.9; }
+
+        /* ========== RESULT BOX ========== */
+        .result-box {
+            margin-top: 18px;
+            padding: 16px 20px;
+            border-radius: 14px;
+            font-weight: 700;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .result-box.show { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== SPLIT BILL ========== */
+        .split-result {
+            background: #ecfdf5;
+            border: 2px solid #10b981;
+            color: #065f46;
+        }
+        .dark-mode .split-result {
+            background: #064e3b;
+            border-color: #10b981;
+            color: #d1fae5;
+        }
+
+        .per-person {
+            font-size: 2.2rem;
+            font-weight: 800;
+            display: block;
+        }
+
+        .breakdown {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            font-weight: 400;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* ========== PASSWORD ========== */
+        .password-display {
+            background: var(--input-bg);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 1.2rem;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+            word-break: break-all;
+            text-align: center;
+            margin-top: 12px;
+            position: relative;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .range-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .range-group input[type="range"] {
+            flex: 1;
+            accent-color: var(--primary);
+            height: 6px;
+        }
+
+        .range-group .range-value {
+            background: var(--primary);
+            color: #fff;
+            border-radius: 8px;
+            padding: 4px 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            background: var(--input-bg);
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: 1.5px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .checkbox-group label:hover {
+            border-color: var(--primary);
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            accent-color: var(--primary);
+            width: 16px;
+            height: 16px;
+        }
+
+        .strength-bar {
+            height: 6px;
+            border-radius: 10px;
+            margin-top: 10px;
+            transition: all 0.3s;
+            background: #e2e8f0;
+        }
+
+        .strength-bar.weak { background: #ef4444; width: 33%; }
+        .strength-bar.medium { background: #f59e0b; width: 66%; }
+        .strength-bar.strong { background: #10b981; width: 100%; }
+
+        /* ========== COUNTDOWN ========== */
+        .countdown-inputs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .countdown-inputs .input-group {
+            flex: 1;
+            min-width: 70px;
+        }
+
+        .countdown-inputs input {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .countdown-display {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .time-block {
+            background: var(--input-bg);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 16px 14px;
+            text-align: center;
+            min-width: 65px;
+        }
+
+        .time-block .number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+            display: block;
+        }
+
+        .time-block .label {
+            font-size: 0.7rem;
+            color: var(--subtext);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        .countdown-finished {
+            background: #fef2f2;
+            border: 2px solid #ef4444;
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            color: #dc2626;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .dark-mode .countdown-finished {
+            background: #450a0a;
+            color: #fca5a5;
+        }
+
+        .countdown-finished.show { display: block; }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-row .btn { flex: 1; }
+
+        .btn-stop {
+            background: var(--accent-red);
+            color: #fff;
+        }
+        .btn-stop:hover { opacity: 0.9; }
+
+        .btn-reset {
+            background: var(--accent-amber);
+            color: #1a1a2e;
+        }
+        .btn-reset:hover { opacity: 0.9; }
+
+        /* ========== TOAST ========== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1a1a2e;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 999;
+            opacity: 0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .dark-mode .toast {
+            background: #e2e8f0;
+            color: #1a1a2e;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 480px) {
+            h1 { font-size: 1.3rem; }
+            .tab-btn { font-size: 0.75rem; padding: 10px 6px; }
+            .card { padding: 18px; }
+            .time-block { min-width: 55px; padding: 12px 8px; }
+            .time-block .number { font-size: 1.5rem; }
+            .per-person { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- ========== HEADER ========== -->
+        <header>
+            <h1>
+                <i class="fa-solid fa-cubes"></i> Utility Hub
+            </h1>
+            <button class="dark-toggle" id="darkToggle" title="Toggle dark mode">
+                <i class="fa-solid fa-moon" id="darkIcon"></i>
+                <span id="darkText">Dark</span>
+            </button>
+        </header>
+
+        <!-- ========== TABS ========== -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="split-bill">
+                <i class="fa-solid fa-calculator"></i> Split Bill
+            </button>
+            <button class="tab-btn" data-tab="password">
+                <i class="fa-solid fa-key"></i> Password
+            </button>
+            <button class="tab-btn" data-tab="countdown">
+                <i class="fa-solid fa-hourglass-half"></i> Countdown
+            </button>
+        </div>
+
+        <!-- ==================== SPLIT BILL TAB ==================== -->
+        <div class="tab-content active" id="tab-split-bill">
+            <div class="card">
+                <h2><i class="fa-solid fa-calculator" style="color: #6366f1;"></i> Split Bill Calculator</h2>
+                <p class="subtitle">Divide the total bill equally among friends</p>
+
+                <div class="input-group">
+                    <label><i class="fa-solid fa-receipt" style="color: #6366f1;"></i> Total Bill Amount</label>
+                    <input type="number" id="billAmount" placeholder="e.g. 50000" step="0.01" min="0">
+                </div>
+
+                <div class="input-group">
+                    <label><i class="fa-solid fa-users" style="color: #10b981;"></i> Number of People</label>
+                    <input type="number" id="numPeople" placeholder="e.g. 4" min="1" max="100">
+                </div>
+
+                <div class="input-group">
+                    <label><i class="fa-solid fa-percent" style="color: #f59e0b;"></i> Tip Percentage (%)</label>
+                    <input type="number" id="tipPercent" placeholder="e.g. 10" min="0" max="100" value="10">
+                </div>
+
+                <button class="btn btn-primary" id="calculateBtn">
+                    <i class="fa-solid fa-divide"></i> Calculate Split
+                </button>
+
+                <div class="result-box split-result" id="splitResult">
+                    <span class="per-person" id="perPersonAmount">0</span>
+                    <div class="breakdown">
+                        <span>💰 Bill: <strong id="baseAmount">0</strong></span>
+                        <span>💎 Tip: <strong id="tipAmount">0</strong></span>
+                        <span>📊 Total: <strong id="totalAmount">0</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== PASSWORD TAB ==================== -->
+        <div class="tab-content" id="tab-password">
+            <div class="card">
+                <h2><i class="fa-solid fa-key" style="color: #f59e0b;"></i> Password Generator</h2>
+                <p class="subtitle">Generate strong, secure passwords instantly</p>
+
+                <div class="input-group">
+                    <label><i class="fa-solid fa-ruler" style="color: #6366f1;"></i> Password Length</label>
+                    <div class="range-group">
+                        <input type="range" id="passLength" min="6" max="40" value="16">
+                        <span class="range-value" id="lengthValue">16</span>
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <label><input type="checkbox" id="includeUpper" checked> <i class="fa-solid fa-a" style="color: #6366f1;"></i> Uppercase</label>
+                    <label><input type="checkbox" id="includeLower" checked> <i class="fa-solid fa-font" style="color: #10b981;"></i> Lowercase</label>
+                    <label><input type="checkbox" id="includeNumbers" checked> <i class="fa-solid fa-hashtag" style="color: #f59e0b;"></i> Numbers</label>
+                    <label><input type="checkbox" id="includeSymbols"> <i class="fa-solid fa-asterisk" style="color: #ef4444;"></i> Symbols</label>
+                </div>
+
+                <button class="btn btn-primary" id="generateBtn">
+                    <i class="fa-solid fa-shuffle"></i> Generate Password
+                </button>
+
+                <div class="password-display" id="passwordDisplay">Click generate</div>
+                <div class="strength-bar" id="strengthBar"></div>
+
+                <button class="btn btn-copy" id="copyBtn">
+                    <i class="fa-solid fa-copy"></i> Copy to Clipboard
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== COUNTDOWN TAB ==================== -->
+        <div class="tab-content" id="tab-countdown">
+            <div class="card">
+                <h2><i class="fa-solid fa-hourglass-half" style="color: #06b6d4;"></i> Countdown Timer</h2>
+                <p class="subtitle">Set a countdown to any future date & time</p>
+
+                <div class="countdown-inputs">
+                    <div class="input-group">
+                        <label><i class="fa-regular fa-calendar" style="color: #6366f1;"></i> Date</label>
+                        <input type="date" id="countdownDate">
+                    </div>
+                    <div class="input-group">
+                        <label><i class="fa-regular fa-clock" style="color: #f59e0b;"></i> Time</label>
+                        <input type="time" id="countdownTime">
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="startCountdownBtn">
+                    <i class="fa-solid fa-play"></i> Start Countdown
+                </button>
+
+                <div class="countdown-display" id="countdownDisplay">
+                    <div class="time-block">
+                        <span class="number" id="days">00</span>
+                        <span class="label">Days</span>
+                    </div>
+                    <div class="time-block">
+                        <span class="number" id="hours">00</span>
+                        <span class="label">Hours</span>
+                    </div>
+                    <div class="time-block">
+                        <span class="number" id="minutes">00</span>
+                        <span class="label">Minutes</span>
+                    </div>
+                    <div class="time-block">
+                        <span class="number" id="seconds">00</span>
+                        <span class="label">Seconds</span>
+                    </div>
+                </div>
+
+                <div class="countdown-finished" id="countdownFinished">
+                    <i class="fa-solid fa-party-horn"></i> Time's Up! 🎉
+                </div>
+
+                <div class="btn-row">
+                    <button class="btn btn-stop" id="stopCountdownBtn">
+                        <i class="fa-solid fa-stop"></i> Stop
+                    </button>
+                    <button class="btn btn-reset" id="resetCountdownBtn">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== TOAST ========== -->
+    <div class="toast" id="toast">
+        <i class="fa-solid fa-circle-check"></i> <span id="toastMsg">Copied!</span>
+    </div>
+
+    <script>
+        // ========== DARK MODE ==========
+        const darkToggle = document.getElementById('darkToggle');
+        const darkIcon = document.getElementById('darkIcon');
+        const darkText = document.getElementById('darkText');
+
+        function initDarkMode() {
+            const isDark = localStorage.getItem('darkMode') === 'true';
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+                darkIcon.className = 'fa-solid fa-sun';
+                darkText.textContent = 'Light';
+            }
+        }
+
+        darkToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            darkIcon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            darkText.textContent = isDark ? 'Light' : 'Dark';
+        });
+
+        // ========== TAB SWITCHING ==========
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabName = btn.dataset.tab;
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(`tab-${tabName}`).classList.add('active');
+            });
+        });
+
+        // ========== TOAST ==========
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // ==================== SPLIT BILL ====================
+        const billAmount = document.getElementById('billAmount');
+        const numPeople = document.getElementById('numPeople');
+        const tipPercent = document.getElementById('tipPercent');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const splitResult = document.getElementById('splitResult');
+        const perPersonAmount = document.getElementById('perPersonAmount');
+        const baseAmountEl = document.getElementById('baseAmount');
+        const tipAmountEl = document.getElementById('tipAmount');
+        const totalAmountEl = document.getElementById('totalAmount');
+
+        function formatCurrency(num) {
+            return num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        }
+
+        calculateBtn.addEventListener('click', () => {
+            const bill = parseFloat(billAmount.value);
+            const people = parseInt(numPeople.value);
+            const tip = parseFloat(tipPercent.value) || 0;
+
+            if (!bill || bill <= 0) {
+                showToast('Please enter a valid bill amount');
+                return;
+            }
+            if (!people || people < 1) {
+                showToast('Please enter number of people (min 1)');
+                return;
+            }
+
+            const tipAmount = bill * (tip / 100);
+            const total = bill + tipAmount;
+            const perPerson = total / people;
+
+            perPersonAmount.textContent = formatCurrency(perPerson) + ' TZS';
+            baseAmountEl.textContent = formatCurrency(bill / people) + ' TZS';
+            tipAmountEl.textContent = formatCurrency(tipAmount / people) + ' TZS';
+            totalAmountEl.textContent = formatCurrency(perPerson) + ' TZS';
+            splitResult.classList.add('show');
+        });
+
+        // ==================== PASSWORD GENERATOR ====================
+        const passLength = document.getElementById('passLength');
+        const lengthValue = document.getElementById('lengthValue');
+        const includeUpper = document.getElementById('includeUpper');
+        const includeLower = document.getElementById('includeLower');
+        const includeNumbers = document.getElementById('includeNumbers');
+        const includeSymbols = document.getElementById('includeSymbols');
+        const generateBtn = document.getElementById('generateBtn');
+        const passwordDisplay = document.getElementById('passwordDisplay');
+        const strengthBar = document.getElementById('strengthBar');
+        const copyBtn = document.getElementById('copyBtn');
+
+        const UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const LOWER = 'abcdefghijklmnopqrstuvwxyz';
+        const NUMBERS = '0123456789';
+        const SYMBOLS = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+        passLength.addEventListener('input', () => {
+            lengthValue.textContent = passLength.value;
+        });
+
+        function generatePassword() {
+            let chars = '';
+            if (includeUpper.checked) chars += UPPER;
+            if (includeLower.checked) chars += LOWER;
+            if (includeNumbers.checked) chars += NUMBERS;
+            if (includeSymbols.checked) chars += SYMBOLS;
+
+            if (!chars) {
+                showToast('Select at least one character type');
+                return '';
+            }
+
+            let password = '';
+            const length = parseInt(passLength.value);
+
+            // Ensure at least one of each selected type
+            const selectedTypes = [];
+            if (includeUpper.checked) selectedTypes.push(UPPER);
+            if (includeLower.checked) selectedTypes.push(LOWER);
+            if (includeNumbers.checked) selectedTypes.push(NUMBERS);
+            if (includeSymbols.checked) selectedTypes.push(SYMBOLS);
+
+            // Add one guaranteed character from each type
+            selectedTypes.forEach(type => {
+                password += type[Math.floor(Math.random() * type.length)];
+            });
+
+            // Fill the rest randomly
+            for (let i = password.length; i < length; i++) {
+                password += chars[Math.floor(Math.random() * chars.length)];
+            }
+
+            // Shuffle
+            password = password.split('').sort(() => Math.random() - 0.5).join('');
+
+            return password;
+        }
+
+        function updateStrength(password) {
+            strengthBar.className = 'strength-bar';
+            if (!password || password === 'Click generate') return;
+
+            const length = password.length;
+            const typesCount = [includeUpper.checked, includeLower.checked, includeNumbers.checked, includeSymbols.checked]
+                .filter(Boolean).length;
+
+            if (length >= 16 && typesCount >= 3) {
+                strengthBar.classList.add('strong');
+            } else if (length >= 10 && typesCount >= 2) {
+                strengthBar.classList.add('medium');
+            } else {
+                strengthBar.classList.add('weak');
+            }
+        }
+
+        generateBtn.addEventListener('click', () => {
+            const password = generatePassword();
+            if (password) {
+                passwordDisplay.textContent = password;
+                updateStrength(password);
+            }
+        });
+
+        copyBtn.addEventListener('click', () => {
+            const text = passwordDisplay.textContent;
+            if (text && text !== 'Click generate') {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('Password copied to clipboard!');
+                }).catch(() => {
+                    showToast('Failed to copy');
+                });
+            } else {
+                showToast('Generate a password first');
+            }
+        });
+
+        // ==================== COUNTDOWN ====================
+        const countdownDate = document.getElementById('countdownDate');
+        const countdownTime = document.getElementById('countdownTime');
+        const startCountdownBtn = document.getElementById('startCountdownBtn');
+        const stopCountdownBtn = document.getElementById('stopCountdownBtn');
+        const resetCountdownBtn = document.getElementById('resetCountdownBtn');
+        const countdownFinished = document.getElementById('countdownFinished');
+        const daysEl = document.getElementById('days');
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
+
+        let countdownInterval = null;
+        let targetDate = null;
+
+        // Set default to tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(12, 0, 0, 0);
+        countdownDate.value = tomorrow.toISOString().split('T')[0];
+        countdownTime.value = '12:00';
+
+        function pad(num) {
+            return String(num).padStart(2, '0');
+        }
+
+        function updateCountdown() {
+            if (!targetDate) return;
+
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance <= 0) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+                daysEl.textContent = '00';
+                hoursEl.textContent = '00';
+                minutesEl.textContent = '00';
+                secondsEl.textContent = '00';
+                countdownFinished.classList.add('show');
+                return;
+            }
+
+            countdownFinished.classList.remove('show');
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const secs = Math.floor((distance % (1000 * 60)) / 1000);
+
+            daysEl.textContent = pad(days);
+            hoursEl.textContent = pad(hours);
+            minutesEl.textContent = pad(mins);
+            secondsEl.textContent = pad(secs);
+        }
+
+        startCountdownBtn.addEventListener('click', () => {
+            const dateVal = countdownDate.value;
+            const timeVal = countdownTime.value;
+
+            if (!dateVal || !timeVal) {
+                showToast('Please select both date and time');
+                return;
+            }
+
+            const dateTimeStr = `${dateVal}T${timeVal}:00`;
+            targetDate = new Date(dateTimeStr).getTime();
+
+            if (targetDate <= new Date().getTime()) {
+                showToast('Please select a future date/time');
+                return;
+            }
+
+            // Clear existing interval
+            if (countdownInterval) clearInterval(countdownInterval);
+
+            countdownFinished.classList.remove('show');
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+            showToast('Countdown started!');
+        });
+
+        stopCountdownBtn.addEventListener('click', () => {
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+                showToast('Countdown stopped');
+            }
+        });
+
+        resetCountdownBtn.addEventListener('click', () => {
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+            targetDate = null;
+            daysEl.textContent = '00';
+            hoursEl.textContent = '00';
+            minutesEl.textContent = '00';
+            secondsEl.textContent = '00';
+            countdownFinished.classList.remove('show');
+            showToast('Countdown reset');
+        });
+
+        // ========== INIT ==========
+        initDarkMode();
+    </script>
+
+</body>
+</html>
