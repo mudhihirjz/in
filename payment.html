@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>PAYMENT PORTAL</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      background: #0b0c0e;
+      font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-wrapper {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      min-height: 100dvh;
+      width: 100%;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 20px 16px;
+      background: linear-gradient(145deg, #0f1115 0%, #0b0c0e 100%);
+      gap: 16px;
+    }
+
+    .content-wrapper {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ============ PAGE HEADER ============ */
+    .page-header {
+      text-align: center;
+    }
+    .page-header i {
+      font-size: 2.4rem;
+      color: #d4af37;
+      margin-bottom: 8px;
+    }
+    .page-header h2 {
+      color: #e6d7b8;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+    .page-header p {
+      color: #b9a577;
+      font-size: 0.85rem;
+      margin-top: 4px;
+    }
+
+    /* ============ TRADER INFO BADGE ============ */
+    .trader-info-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: rgba(20, 22, 27, 0.8);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 14px;
+      padding: 12px 16px;
+    }
+    .trader-info-badge .badge-icon {
+      font-size: 1.4rem;
+      color: #d4af37;
+    }
+    .trader-info-badge .badge-text {
+      color: #e6d7b8;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .trader-info-badge .badge-type {
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 12px;
+      padding: 3px 12px;
+      color: #d4af37;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    /* ============ AMOUNT DISPLAY ============ */
+    .amount-display {
+      background: rgba(212, 175, 55, 0.08);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+    }
+    .amount-label {
+      color: #7a7a7a;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .amount-value {
+      color: #d4af37;
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+    .amount-value .currency {
+      font-size: 1.2rem;
+      vertical-align: super;
+    }
+    .amount-duration {
+      color: #b9a577;
+      font-size: 0.8rem;
+      margin-top: 2px;
+    }
+
+    /* ============ DURATION SELECTOR ============ */
+    .duration-selector {
+      display: flex;
+      gap: 8px;
+    }
+    .duration-option {
+      flex: 1;
+      background: rgba(20, 22, 27, 0.8);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 12px;
+      padding: 12px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .duration-option:hover {
+      border-color: #d4af37;
+      background: rgba(30, 33, 40, 0.9);
+    }
+    .duration-option.selected {
+      border-color: #d4af37;
+      background: rgba(212, 175, 55, 0.12);
+      box-shadow: 0 0 16px rgba(212, 175, 55, 0.2);
+    }
+    .duration-option .dur-label {
+      color: #e6d7b8;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .duration-option .dur-price {
+      color: #d4af37;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .duration-option .dur-save {
+      color: #2ecc71;
+      font-size: 0.65rem;
+      font-weight: 600;
+    }
+
+    /* ============ PAYMENT METHODS ============ */
+    .section-title {
+      color: #d4af37;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .section-title i { font-size: 0.9rem; }
+
+    .payment-methods {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .payment-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(20, 22, 27, 0.8);
+      border: 1px solid rgba(212, 175, 55, 0.15);
+      border-radius: 14px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .payment-option:hover {
+      border-color: #d4af37;
+    }
+    .payment-option.selected-method {
+      border-color: #d4af37;
+      background: rgba(212, 175, 55, 0.08);
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.15);
+    }
+    .payment-radio {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid rgba(212, 175, 55, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.3s;
+    }
+    .payment-option.selected-method .payment-radio {
+      border-color: #d4af37;
+      background: rgba(212, 175, 55, 0.2);
+    }
+    .payment-radio-inner {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #d4af37;
+      display: none;
+    }
+    .payment-option.selected-method .payment-radio-inner {
+      display: block;
+    }
+    .payment-icon {
+      font-size: 1.4rem;
+      color: #d4af37;
+      width: 28px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .payment-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .payment-name {
+      color: #e6d7b8;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .payment-desc {
+      color: #7a7a7a;
+      font-size: 0.7rem;
+    }
+
+    /* ============ MOBILE PAYMENT FIELDS ============ */
+    .mobile-payment-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px;
+      background: rgba(20, 22, 27, 0.6);
+      border: 1px solid rgba(212, 175, 55, 0.15);
+      border-radius: 12px;
+    }
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .form-row label {
+      color: #7a7a7a;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .form-row input {
+      background: rgba(10, 11, 13, 0.6);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #f0e6d2;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border 0.3s;
+      width: 100%;
+    }
+    .form-row input:focus {
+      border-color: #d4af37;
+    }
+    .phone-prefix {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .phone-prefix span {
+      color: #d4af37;
+      font-weight: 600;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+    .phone-prefix input {
+      flex: 1;
+    }
+
+    /* ============ CONFIRM BUTTON ============ */
+    .btn-confirm {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+      background: linear-gradient(135deg, #c9a53b, #b8942e);
+      color: #0b0c0e;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-confirm:hover {
+      background: linear-gradient(135deg, #d4af37, #c9a53b);
+      box-shadow: 0 8px 24px rgba(212, 175, 55, 0.35);
+    }
+
+    /* ============ TOAST ============ */
+    .toast-container {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 320px;
+    }
+    .toast {
+      padding: 12px 16px;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 500;
+      animation: slideIn 0.3s ease;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+    .toast-success { background: #2ecc71; }
+    .toast-error { background: #e74c3c; }
+    .toast-info { background: #3498db; }
+    @keyframes slideIn {
+      from { transform: translateX(120%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* ============ USSD PUSH MODAL (Replaces PIN Modal) ============ */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal {
+      background: #1a1e24;
+      border: 1px solid rgba(212,175,55,0.3);
+      border-radius: 20px;
+      padding: 24px;
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      text-align: center;
+    }
+    .modal .ussd-icon {
+      font-size: 3rem;
+      color: #d4af37;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.05); }
+    }
+    .modal h3 {
+      color: #e6d7b8;
+      font-size: 1.1rem;
+    }
+    .modal p {
+      color: #b9a577;
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+    .modal .network-highlight {
+      color: #d4af37;
+      font-weight: 700;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 8px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+    }
+    .btn-cancel {
+      background: transparent;
+      border: 1px solid rgba(220,80,80,0.4);
+      color: #dc5050;
+    }
+    .btn-cancel:hover { background: rgba(220,80,80,0.1); }
+    .btn-success {
+      background: #2ecc71;
+      color: #fff;
+    }
+    .btn-success:hover { box-shadow: 0 4px 14px rgba(46,204,113,0.3); }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ============ PROCESSING OVERLAY ============ */
+    .processing-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid rgba(212,175,55,0.2);
+      border-top-color: #d4af37;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .processing-text {
+      color: #e6d7b8;
+      font-size: 0.9rem;
+    }
+
+    /* ============ SUCCESS OVERLAY ============ */
+    .success-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 1002;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      text-align: center;
+      padding: 20px;
+    }
+    .success-icon {
+      font-size: 4rem;
+      color: #2ecc71;
+      animation: bounceIn 0.6s ease;
+    }
+    @keyframes bounceIn {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    .success-title {
+      color: #e6d7b8;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+    .success-details {
+      color: #b9a577;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+    .btn-dashboard {
+      background: linear-gradient(135deg, #c9a53b, #b8942e);
+      color: #0b0c0e;
+      padding: 12px 28px;
+      border-radius: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      border: none;
+      margin-top: 8px;
+      transition: all 0.3s;
+    }
+    .btn-dashboard:hover {
+      box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+    }
+
+    /* ============ FOOTER ============ */
+    .app-footer {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 20px;
+      color: #7a7a7a;
+      font-size: 0.7rem;
+      letter-spacing: 0.4px;
+      background: #0b0c0e;
+      border-top: 1px solid rgba(212,175,55,0.1);
+      position: relative;
+      flex-shrink: 0;
+    }
+    .footer-center { flex: 1; text-align: center; }
+    .footer-right { position: absolute; right: 20px; font-weight: 400; color: #9e9e9e; }
+
+    @media (min-width: 768px) {
+      .app-wrapper { max-width: 600px; }
+      .content-wrapper { max-width: 480px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-wrapper">
+    <div class="main-content">
+      <div class="content-wrapper">
+        
+        <!-- Page Header -->
+        <div class="page-header">
+          <i class="fas fa-credit-card"></i>
+          <h2>Complete Your Registration</h2>
+          <p>Select your subscription plan and payment method</p>
+        </div>
+
+        <!-- Trader Info -->
+        <div class="trader-info-badge">
+          <i class="fas fa-handshake badge-icon"></i>
+          <span class="badge-text">Trader Account</span>
+          <span class="badge-type" id="traderTypeBadge">WHOLESALER</span>
+        </div>
+
+        <!-- Amount Display -->
+        <div class="amount-display">
+          <div class="amount-label">Subscription Fee</div>
+          <div class="amount-value">
+            <span class="currency">TZS</span> <span id="displayAmount">250,000</span>
+          </div>
+          <div class="amount-duration" id="displayDuration">Monthly Plan</div>
+        </div>
+
+        <!-- Duration Selector -->
+        <div class="section-title"><i class="fas fa-calendar-alt"></i> Select Duration</div>
+        <div class="duration-selector" id="durationSelector">
+          <div class="duration-option" data-duration="weekly">
+            <div class="dur-label">Weekly</div>
+            <div class="dur-price" id="weeklyPrice">80,000</div>
+            <div class="dur-save">—</div>
+          </div>
+          <div class="duration-option selected" data-duration="monthly">
+            <div class="dur-label">Monthly</div>
+            <div class="dur-price" id="monthlyPrice">250,000</div>
+            <div class="dur-save">Save 17%</div>
+          </div>
+          <div class="duration-option" data-duration="annual">
+            <div class="dur-label">Annual</div>
+            <div class="dur-price" id="annualPrice">2,000,000</div>
+            <div class="dur-save">Save 44%</div>
+          </div>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="section-title"><i class="fas fa-wallet"></i> Payment Method</div>
+        <div class="payment-methods" id="paymentMethods">
+          <!-- Bank Card -->
+          <div class="payment-option selected-method" data-method="card">
+            <div class="payment-radio">
+              <div class="payment-radio-inner"></div>
+            </div>
+            <i class="fas fa-credit-card payment-icon"></i>
+            <div class="payment-info">
+              <div class="payment-name">Bank Card</div>
+              <div class="payment-desc">Pay securely via Google Play Protect</div>
+            </div>
+          </div>
+
+          <!-- Vodacom M-Pesa -->
+          <div class="payment-option" data-method="vodacom">
+            <div class="payment-radio">
+              <div class="payment-radio-inner"></div>
+            </div>
+            <i class="fas fa-mobile-alt payment-icon"></i>
+            <div class="payment-info">
+              <div class="payment-name">Vodacom M-Pesa</div>
+              <div class="payment-desc">Pay via Vodacom mobile money (USSD Push)</div>
+            </div>
+          </div>
+
+          <!-- Tigo Pesa -->
+          <div class="payment-option" data-method="tigo">
+            <div class="payment-radio">
+              <div class="payment-radio-inner"></div>
+            </div>
+            <i class="fas fa-mobile-alt payment-icon"></i>
+            <div class="payment-info">
+              <div class="payment-name">Tigo Pesa</div>
+              <div class="payment-desc">Pay via Tigo mobile money (USSD Push)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Payment Fields (hidden by default) -->
+        <div class="mobile-payment-fields hidden" id="mobilePaymentFields">
+          <div class="form-row">
+            <label id="mobileNetworkLabel">Mobile Number</label>
+            <div class="phone-prefix">
+              <span id="mobilePrefix">+255</span>
+              <input type="tel" id="mobileNumber" placeholder="7XX XXX XXX" maxlength="9" inputmode="numeric" autocomplete="tel-national">
+            </div>
+          </div>
+        </div>
+
+        <!-- Confirm Button -->
+        <button class="btn-confirm" id="confirmPaymentBtn">
+          <i class="fas fa-lock"></i> CONFIRM PAYMENT
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="app-footer">
+      <span class="footer-center">All right reserved @2026</span>
+      <span class="footer-right">v.1</span>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- USSD Push Modal (Replaces old PIN Modal) -->
+  <div class="modal-overlay hidden" id="ussdModal">
+    <div class="modal">
+      <i class="fas fa-mobile-alt ussd-icon"></i>
+      <h3>Confirm Payment on Your Phone</h3>
+      <p>
+        A <span class="network-highlight" id="ussdNetworkName">M-Pesa</span> payment request has been sent to<br>
+        <span class="network-highlight" id="ussdPhoneDisplay">+255 7XX XXX XXX</span>
+      </p>
+      <p>
+        Please check your phone and enter your<br>
+        <span class="network-highlight">M-Pesa/Tigo Pesa PIN</span><br>
+        to complete the payment.
+      </p>
+      <div class="modal-actions">
+        <button class="btn btn-cancel" id="cancelUssdBtn">Cancel</button>
+        <button class="btn btn-success" id="confirmUssdPaidBtn">
+          <i class="fas fa-check"></i> I've Paid
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Processing Overlay -->
+  <div class="processing-overlay hidden" id="processingOverlay">
+    <div class="spinner"></div>
+    <div class="processing-text" id="processingText">Processing Payment...</div>
+  </div>
+
+  <!-- Success Overlay -->
+  <div class="success-overlay hidden" id="successOverlay">
+    <i class="fas fa-check-circle success-icon"></i>
+    <div class="success-title">Payment Successful!</div>
+    <div class="success-details" id="successDetails"></div>
+    <button class="btn-dashboard" id="goToDashboard">
+      <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+    </button>
+  </div>
+
+  <script>
+    (function() {
+      // ============ DOM ELEMENTS ============
+      const traderTypeBadge = document.getElementById('traderTypeBadge');
+      const displayAmount = document.getElementById('displayAmount');
+      const displayDuration = document.getElementById('displayDuration');
+      const durationSelector = document.getElementById('durationSelector');
+      const paymentMethods = document.getElementById('paymentMethods');
+      const mobilePaymentFields = document.getElementById('mobilePaymentFields');
+      const mobileNetworkLabel = document.getElementById('mobileNetworkLabel');
+      const mobilePrefix = document.getElementById('mobilePrefix');
+      const mobileNumber = document.getElementById('mobileNumber');
+      const confirmPaymentBtn = document.getElementById('confirmPaymentBtn');
+      const ussdModal = document.getElementById('ussdModal');
+      const ussdNetworkName = document.getElementById('ussdNetworkName');
+      const ussdPhoneDisplay = document.getElementById('ussdPhoneDisplay');
+      const cancelUssdBtn = document.getElementById('cancelUssdBtn');
+      const confirmUssdPaidBtn = document.getElementById('confirmUssdPaidBtn');
+      const processingOverlay = document.getElementById('processingOverlay');
+      const processingText = document.getElementById('processingText');
+      const successOverlay = document.getElementById('successOverlay');
+      const successDetails = document.getElementById('successDetails');
+      const goToDashboard = document.getElementById('goToDashboard');
+      const toastContainer = document.getElementById('toastContainer');
+
+      // ============ DYNAMIC TRADER TYPE (from URL query or default) ============
+      function getTraderTypeFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        const tier = params.get('tier');
+        if (tier === 'retailer' || tier === 'wholesaler') {
+          return tier;
+        }
+        return 'wholesaler'; // default
+      }
+
+      const traderType = getTraderTypeFromURL();
+      
+      // ============ DYNAMIC CURRENCY (extendable) ============
+      function getCurrencyConfig() {
+        const params = new URLSearchParams(window.location.search);
+        const currencyCode = params.get('currency') || 'TZS';
+        
+        const currencies = {
+          TZS: { symbol: 'TZS', locale: 'sw-TZ' },
+          KES: { symbol: 'KES', locale: 'sw-KE' },
+          USD: { symbol: 'USD', locale: 'en-US' }
+        };
+        
+        return currencies[currencyCode] || currencies.TZS;
+      }
+
+      const currencyConfig = getCurrencyConfig();
+      
+      // ============ PRICING DATA ============
+      const pricing = {
+        wholesaler: {
+          weekly: 80000,
+          monthly: 250000,
+          annual: 2000000
+        },
+        retailer: {
+          weekly: 40000,
+          monthly: 120000,
+          annual: 900000
+        }
+      };
+
+      let selectedDuration = 'monthly';
+      let selectedMethod = 'card';
+      let currentAmount = pricing[traderType].monthly;
+
+      // ============ INITIALIZE ============
+      function init() {
+        // Update all currency displays
+        document.querySelectorAll('.currency').forEach(el => {
+          el.textContent = currencyConfig.symbol;
+        });
+        
+        // Set trader type badge
+        traderTypeBadge.textContent = traderType.toUpperCase();
+        
+        // Update prices
+        updatePrices();
+        
+        // Set default selection (monthly already selected in HTML)
+        selectDuration('monthly');
+        selectMethod('card');
+      }
+
+      function updatePrices() {
+        const wp = pricing[traderType].weekly;
+        const mp = pricing[traderType].monthly;
+        const ap = pricing[traderType].annual;
+
+        document.getElementById('weeklyPrice').textContent = formatNumber(wp);
+        document.getElementById('monthlyPrice').textContent = formatNumber(mp);
+        document.getElementById('annualPrice').textContent = formatNumber(ap);
+        
+        // Update discount percentages
+        updateDiscountLabels(wp, mp, ap);
+      }
+
+      function updateDiscountLabels(weekly, monthly, annual) {
+        const monthlyWeeklyTotal = weekly * 4;
+        const annualMonthlyTotal = monthly * 12;
+        
+        const monthlySave = Math.round((1 - monthly / monthlyWeeklyTotal) * 100);
+        const annualSave = Math.round((1 - annual / annualMonthlyTotal) * 100);
+        
+        const durationOptions = document.querySelectorAll('.duration-option');
+        durationOptions.forEach(opt => {
+          const saveEl = opt.querySelector('.dur-save');
+          if (opt.dataset.duration === 'weekly') {
+            saveEl.textContent = '—';
+          } else if (opt.dataset.duration === 'monthly') {
+            saveEl.textContent = `Save ${monthlySave}%`;
+          } else if (opt.dataset.duration === 'annual') {
+            saveEl.textContent = `Save ${annualSave}%`;
+          }
+        });
+      }
+
+      function formatNumber(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      }
+
+      function selectDuration(duration) {
+        selectedDuration = duration;
+        currentAmount = pricing[traderType][duration];
+
+        document.querySelectorAll('.duration-option').forEach(opt => {
+          opt.classList.toggle('selected', opt.dataset.duration === duration);
+        });
+
+        displayAmount.textContent = formatNumber(currentAmount);
+        
+        const durationLabels = {
+          weekly: 'Weekly Plan',
+          monthly: 'Monthly Plan',
+          annual: 'Annual Plan'
+        };
+        displayDuration.textContent = durationLabels[duration];
+      }
+
+      function selectMethod(method) {
+        selectedMethod = method;
+
+        document.querySelectorAll('.payment-option').forEach(opt => {
+          opt.classList.toggle('selected-method', opt.dataset.method === method);
+        });
+
+        if (method === 'vodacom' || method === 'tigo') {
+          mobilePaymentFields.classList.remove('hidden');
+          if (method === 'vodacom') {
+            mobileNetworkLabel.textContent = 'Vodacom M-Pesa Number';
+            mobilePrefix.textContent = '+255';
+          } else {
+            mobileNetworkLabel.textContent = 'Tigo Pesa Number';
+            mobilePrefix.textContent = '+255';
+          }
+        } else {
+          mobilePaymentFields.classList.add('hidden');
+          mobileNumber.value = '';
+        }
+      }
+
+      // ============ TOAST ============
+      function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.textContent = message;
+        toastContainer.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+      }
+
+      // ============ VALIDATE PHONE NUMBER ============
+      function validatePhoneNumber(phone) {
+        // Remove any non-digit characters
+        const clean = phone.replace(/\D/g, '');
+        // Must be exactly 9 digits starting with 7
+        if (clean.length !== 9) return false;
+        if (!clean.startsWith('7')) return false;
+        return true;
+      }
+
+      // ============ EVENT LISTENERS ============
+      
+      durationSelector.addEventListener('click', function(e) {
+        const option = e.target.closest('.duration-option');
+        if (option) {
+          selectDuration(option.dataset.duration);
+        }
+      });
+
+      paymentMethods.addEventListener('click', function(e) {
+        const option = e.target.closest('.payment-option');
+        if (option) {
+          selectMethod(option.dataset.method);
+        }
+      });
+
+      // Confirm Payment Button
+      confirmPaymentBtn.addEventListener('click', function() {
+        if (selectedMethod === 'vodacom' || selectedMethod === 'tigo') {
+          const phone = mobileNumber.value.trim();
+          if (!phone || !validatePhoneNumber(phone)) {
+            showToast('Please enter a valid 9-digit phone number starting with 7!', 'error');
+            mobileNumber.focus();
+            return;
+          }
+          // Show USSD Push modal instead of PIN modal
+          showUssdModal();
+        } else {
+          // Card payment
+          processCardPayment();
+        }
+      });
+
+      // ============ USSD PUSH MODAL ============
+      function showUssdModal() {
+        const networkName = selectedMethod === 'vodacom' ? 'Vodacom M-Pesa' : 'Tigo Pesa';
+        const phoneNumber = mobileNumber.value.trim();
+        
+        ussdNetworkName.textContent = networkName;
+        ussdPhoneDisplay.textContent = `+255 ${phoneNumber}`;
+        
+        ussdModal.classList.remove('hidden');
+        
+        // Simulate USSD push being sent
+        showToast(`USSD push sent to +255 ${phoneNumber}. Check your phone!`, 'info');
+      }
+
+      function hideUssdModal() {
+        ussdModal.classList.add('hidden');
+      }
+
+      cancelUssdBtn.addEventListener('click', function() {
+        hideUssdModal();
+        showToast('Payment cancelled.', 'info');
+      });
+
+      ussdModal.addEventListener('click', function(e) {
+        if (e.target === ussdModal) hideUssdModal();
+      });
+
+      // User confirms they've paid via USSD
+      confirmUssdPaidBtn.addEventListener('click', function() {
+        hideUssdModal();
+        verifyMobilePayment();
+      });
+
+      // ============ PAYMENT PROCESSING ============
+      function processCardPayment() {
+        showProcessing('Processing card payment via Google Play Protect...');
+        
+        setTimeout(() => {
+          hideProcessing();
+          const success = Math.random() > 0.05; // 95% success rate
+          
+          if (success) {
+            showPaymentSuccess('Bank Card');
+          } else {
+            showToast('Card payment declined! Please try again or use another method.', 'error');
+          }
+        }, 2500);
+      }
+
+      function verifyMobilePayment() {
+        const phoneNumber = mobileNumber.value.trim();
+        const networkName = selectedMethod === 'vodacom' ? 'Vodacom M-Pesa' : 'Tigo Pesa';
+        
+        showProcessing(`Verifying ${networkName} payment...`);
+        
+        setTimeout(() => {
+          hideProcessing();
+          const success = Math.random() > 0.1; // 90% success rate
+          
+          if (success) {
+            showPaymentSuccess(networkName, phoneNumber);
+          } else {
+            showToast(`${networkName} payment could not be verified. Please try again or check your balance.`, 'error');
+          }
+        }, 3500);
+      }
+
+      function showPaymentSuccess(method, phoneNumber = null) {
+        const durationLabels = {
+          weekly: 'Weekly',
+          monthly: 'Monthly',
+          annual: 'Annual'
+        };
+        
+        let detailsHTML = `
+          <strong>Amount:</strong> ${currencyConfig.symbol} ${formatNumber(currentAmount)}<br>
+          <strong>Plan:</strong> ${durationLabels[selectedDuration]}<br>
+          <strong>Trader Type:</strong> ${traderType.charAt(0).toUpperCase() + traderType.slice(1)}<br>
+          <strong>Method:</strong> ${method}
+        `;
+        
+        if (phoneNumber) {
+          detailsHTML += `<br><strong>Phone:</strong> +255 ${phoneNumber}`;
+        }
+        
+        successDetails.innerHTML = detailsHTML;
+        successOverlay.classList.remove('hidden');
+      }
+
+      goToDashboard.addEventListener('click', function() {
+        successOverlay.classList.add('hidden');
+        alert('Redirecting to your Trader Dashboard...');
+        // window.location.href = `dashboard.html?tier=${traderType}`;
+      });
+
+      function showProcessing(message = 'Processing Payment...') {
+        processingText.textContent = message;
+        processingOverlay.classList.remove('hidden');
+      }
+
+      function hideProcessing() {
+        processingOverlay.classList.add('hidden');
+      }
+
+      // ============ INIT ============
+      init();
+    })();
+  </script>
+</body>
+</html>
